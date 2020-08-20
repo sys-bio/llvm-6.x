@@ -538,7 +538,7 @@ option(LLVM_BUILD_LLVM_DYLIB "Build libllvm dynamic library" ${LLVM_BUILD_LLVM_D
 
 option(LLVM_DYLIB_SYMBOL_VERSIONING OFF)
 
-option(LLVM_OPTIMIZED_TABLEGEN "Force TableGen to be built with optimization" OFF)
+option(LLVM_OPTIMIZED_TABLEGEN "Force TableGen to be built with optimization" ON)
 if(CMAKE_CROSSCOMPILING OR (LLVM_OPTIMIZED_TABLEGEN AND (LLVM_ENABLE_ASSERTIONS OR CMAKE_CONFIGURATION_TYPES)))
   set(LLVM_USE_HOST_TOOLS ON)
 endif()
