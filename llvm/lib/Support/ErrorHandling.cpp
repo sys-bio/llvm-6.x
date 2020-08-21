@@ -123,7 +123,8 @@ void llvm::report_fatal_error(const Twine &Reason, bool GenCrashDiag) {
   // files registered with RemoveFileOnSignal.
   sys::RunInterruptHandlers();
 
-  exit(1);
+  throw std::runtime_error("llvm fatal error: " + Reason.str());
+//  exit(1);
 }
 
 void llvm::install_bad_alloc_error_handler(fatal_error_handler_t handler,
