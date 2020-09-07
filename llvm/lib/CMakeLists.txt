@@ -24,5 +24,11 @@ add_subdirectory(ProfileData)
 add_subdirectory(Passes)
 add_subdirectory(ToolDrivers)
 add_subdirectory(XRay)
-add_subdirectory(Testing)
+
+# modified by ciaran welsh so that Testing subdirectory only gets included
+# if LLVM_INCLUDE_TESTS is on. This helps prevent target namespace clash with
+# googletest
+if (LLVM_INCLUDE_TESTS)
+    add_subdirectory(Testing)
+endif ()
 add_subdirectory(WindowsManifest)
