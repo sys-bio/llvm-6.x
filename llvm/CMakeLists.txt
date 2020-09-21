@@ -6,6 +6,8 @@ cmake_policy(SET CMP0022 NEW)
 
 cmake_policy(SET CMP0048 NEW)
 
+cmake_policy(SET CMP0068 NEW)
+
 # CMake 3.1 and higher include generator expressions of the form
 # $<TARGETLIB:obj> in the SOURCES property.  These need to be
 # stripped everywhere that access the SOURCES property, so we just
