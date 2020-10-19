@@ -10,7 +10,7 @@ stages:
   - stage: 
     jobs:
       - job: BuildLLVMLinux
-        timeoutInMinutes: 0
+        timeoutInMinutes: "0"
         displayName: Linux
         continueOnError: "false"
         pool:
@@ -35,7 +35,7 @@ stages:
               cmakeArgs: --build . --target install --config $(BuildType) -j 12
 
       - job: BuildWindowsWindows
-        timeoutInMinutes: 0
+        timeoutInMinutes: "0"
         displayName: Windows
         continueOnError: "false"
         pool:
@@ -60,7 +60,7 @@ stages:
 
             
       - job: BuildLLVMMacOs
-        timeoutInMinutes: 0
+        timeoutInMinutes: "0"
         displayName: Mac
         continueOnError: "false"
         pool:
