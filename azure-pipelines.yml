@@ -26,7 +26,8 @@ stages:
           - task: CMake@1
             displayName: ConfigureCommand
             inputs:
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+              # llvm is actually in ../llvm not ..
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
           - task: CMake@1
             displayName: BuildCommand
             inputs:
@@ -49,7 +50,7 @@ stages:
           - task: CMake@1
             displayName: ConfigureCommand
             inputs:
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 ../llvm
           - task: CMake@1
             displayName: BuildCommand
             inputs:
@@ -73,7 +74,7 @@ stages:
           - task: CMake@1
             displayName: ConfigureCommand
             inputs:
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
           - task: CMake@1
             displayName: BuildCommand
             inputs:
