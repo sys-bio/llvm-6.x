@@ -1,0 +1,81 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+stages:
+  - stage: 
+    jobs:
+      - job: BuildLLVMLinux
+        displayName: Linux
+        continueOnError: "false"
+        pool:
+          vmImage: "ubuntu-18.04"
+        strategy:
+          matrix:
+            64-bit Linux Release: 
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
+            64-bit Linux Debug: 
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
+        steps:
+          - task: CMake@1
+            displayName: ConfigureCommand
+            inputs:
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+          - task: CMake@1
+            displayName: BuildCommand
+            inputs:
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+
+      - job: BuildWindowsWindows
+        displayName: Windows
+        continueOnError: "false"
+        pool:
+          vmImage: "windows-2019"
+        strategy:
+          matrix:
+            64-bit Linux Release: 
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
+            64-bit Linux Debug: 
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
+        steps:
+          - task: CMake@1
+            displayName: ConfigureCommand
+            inputs:
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+          - task: CMake@1
+            displayName: BuildCommand
+            inputs:
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+
+            
+      - job: BuildLLVMMacOs
+        displayName: Mac
+        continueOnError: "false"
+        pool:
+          vmImage: 'macOS-10.15'
+        strategy:
+          matrix:
+            64-bit Linux Release: 
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
+            64-bit Linux Debug: 
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
+        steps:
+          - task: CMake@1
+            displayName: ConfigureCommand
+            inputs:
+              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ..
+          - task: CMake@1
+            displayName: BuildCommand
+            inputs:
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+
