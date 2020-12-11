@@ -1,5 +1,6 @@
 trigger:
-  - release/6.x
+  branches:
+    - release/6.x
 
 stages:
   - stage: 
