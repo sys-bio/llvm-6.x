@@ -1,6 +1,5 @@
 trigger:
-  branches:
-    - release/6.x
+  - release/6.x
 
 stages:
   - stage: 
@@ -88,7 +87,7 @@ stages:
         displayName: Mac
         continueOnError: "false"
         pool:
-          - vmImage: 'macOS-10.15'
+          vmImage: 'macOS-10.15'
         variables:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
