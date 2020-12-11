@@ -33,6 +33,12 @@ stages:
               echo "Agent.OS $(Agent.OS)"
           - script: |
               echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+
+              if [ ! -d $(BUILD_DIRECTORY) ]
+                then 
+                  mkdir -p $(BUILD_DIRECTORY)
+              fi 
+
               cd $(BUILD_DIRECTORY)
               echo "pwd: $(pwd)"
               echo "Configuring CMake"
@@ -67,6 +73,7 @@ stages:
         steps:
           - script: |
               echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+              mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
               echo "pwd: $(pwd)"
               echo "Configuring CMake"
@@ -104,6 +111,10 @@ stages:
         steps:
           - script: |
               echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+              if [ ! -d $(BUILD_DIRECTORY) ]
+                then 
+                  mkdir -p $(BUILD_DIRECTORY)
+              fi 
               cd $(BUILD_DIRECTORY)
               echo "pwd: $(pwd)"
               echo "Configuring CMake"
