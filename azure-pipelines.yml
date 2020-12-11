@@ -61,9 +61,9 @@ stages:
           vmImage: "windows-2019"
         variables:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
-          BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
-          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
+          BUILD_DIRECTORY: '$(SOURCE_DIRECTORY)\build'
+          INSTALL_DIRECTORY: '$(SOURCE_DIRECTORY)\install-azure'
         strategy:
           matrix:
             64-bit Windows Release: 
@@ -77,7 +77,7 @@ stages:
               cd $(BUILD_DIRECTORY)
               echo "pwd: $(pwd)"
               echo "Configuring CMake"
-              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" ..
+              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)\$(BuildType)" $(SOURCE_DIRECTORY)
               cmake --build . --target install --config $(BuildType)
                     
           - task: CopyFiles@2
