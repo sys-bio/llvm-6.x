@@ -1,5 +1,5 @@
 trigger:
-- release/6.x
+  - release/6.x
 
 stages:
   - stage: 
