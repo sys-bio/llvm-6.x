@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - release/6.x
 
@@ -15,24 +10,42 @@ stages:
         continueOnError: "false"
         pool:
           vmImage: "ubuntu-18.04"
+        variables:
+          CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
+          SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
+          BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
         strategy:
           matrix:
             64-bit Linux Release: 
               BuildType: Release
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
             64-bit Linux Debug: 
               BuildType: Debug
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
         steps:
-          - task: CMake@1
-            displayName: ConfigureCommand
+          - script: |
+              echo "Default directory: $(pwd)"
+              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
+              echo "Pipeline.Workspace $(Pipeline.Workspace)"
+              echo "System.DefaultWorkingDirectory $(System.DefaultWorkingDirectory)"
+              echo "SOURCE_DIRECORY $(SOURCE_DIRECORY)"
+              echo "BUILD_DIRECTORY $(BUILD_DIRECTORY)"
+              echo "INSTALL_DIRECTORY $(INSTALL_DIRECTORY)"
+              echo "Agent.OS $(Agent.OS)"
+          - script: |
+              echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+              cd $(BUILD_DIRECTORY)
+              echo "pwd: $(pwd)"
+              echo "Configuring CMake"
+              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -DCMAKE_INSTALL_PREFIX=$(INSTALL_DIRECTORY)/$(BuildType) ..
+              cmake --build . --target install --config $(BuildType)
+          - task: CopyFiles@2
             inputs:
-              # llvm is actually in ../llvm not ..
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
-          - task: CMake@1
-            displayName: BuildCommand
+              contents: '$(INSTALL_DIRECTORY)/$(BuildType)'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
             inputs:
-              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: LLVM-6.x-x64-gcc
 
       - job: BuildWindowsWindows
         timeoutInMinutes: "0"
@@ -40,46 +53,67 @@ stages:
         continueOnError: "false"
         pool:
           vmImage: "windows-2019"
+        variables:
+          CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
+          BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
+          SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
         strategy:
           matrix:
-            64-bit Linux Release: 
+            64-bit Windows Release: 
               BuildType: Release
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
-            64-bit Linux Debug: 
+            64-bit Windows Debug: 
               BuildType: Debug
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
         steps:
-          - task: CMake@1
-            displayName: ConfigureCommand
+          - script: |
+              echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+              cd $(BUILD_DIRECTORY)
+              echo "pwd: $(pwd)"
+              echo "Configuring CMake"
+              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" ..
+              cmake --build . --target install --config $(BuildType)
+                    
+          - task: CopyFiles@2
             inputs:
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 ../llvm
-          - task: CMake@1
-            displayName: BuildCommand
+              contents: '$(INSTALL_DIRECTORY)/$(BuildType)'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
             inputs:
-              cmakeArgs: --build . --target install --config $(BuildType) -j 12
-
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: LLVM-6.x-x64-msvc2019
             
       - job: BuildLLVMMacOs
         timeoutInMinutes: "0"
         displayName: Mac
         continueOnError: "false"
         pool:
-          vmImage: 'macOS-10.15'
+        variables:
+          CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
+          BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
+          SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
         strategy:
           matrix:
-            64-bit Linux Release: 
+            64-bit Mac Release: 
               BuildType: Release
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
-            64-bit Linux Debug: 
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(INSTALL_DIRECTORY)/release"
+            64-bit Mac Debug: 
               BuildType: Debug
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(INSTALL_DIRECTORY)/debug"
         steps:
-          - task: CMake@1
-            displayName: ConfigureCommand
+          - script: |
+              echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
+              cd $(BUILD_DIRECTORY)
+              echo "pwd: $(pwd)"
+              echo "Configuring CMake"
+              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" ..
+              cmake --build . --target install --config $(BuildType)
+          - task: CopyFiles@2
             inputs:
-              cmakeArgs: $(CMakeArgs) -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
-          - task: CMake@1
-            displayName: BuildCommand
+              contents: '$(INSTALL_DIRECTORY)/$(BuildType)'
+              targetFolder: $(Build.ArtifactStagingDirectory)
+          - task: PublishBuildArtifacts@1
             inputs:
-              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: LLVM-6.x-x64-clang
 
