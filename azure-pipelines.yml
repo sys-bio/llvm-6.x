@@ -87,6 +87,7 @@ stages:
         displayName: Mac
         continueOnError: "false"
         pool:
+          - vmImage: 'macOS-10.15'
         variables:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
