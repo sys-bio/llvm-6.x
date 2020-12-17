@@ -20,8 +20,8 @@ stages:
           matrix:
             64-bit Linux Release: 
               BuildType: Release
-            64-bit Linux Debug: 
-              BuildType: Debug
+            64-bit Linux RelWithDebInfo:
+              BuildType: RelWithDebInfo
         steps:
           - script: |
               echo "Default directory: $(pwd)"
@@ -69,8 +69,8 @@ stages:
           matrix:
             64-bit Windows Release: 
               BuildType: Release
-            64-bit Windows Debug: 
-              BuildType: Debug
+            64-bit Windows RelWithDebInfo:
+              BuildType: RelWithDebInfo
         steps:
           - script: |
               echo "CD to BUILD_DIRECTORY: $(BUILD_DIRECTORY)"
