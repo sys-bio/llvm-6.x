@@ -77,8 +77,8 @@ stages:
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
               echo "pwd: $(pwd)"
-              echo "Configuring CMake"
-              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)\$(BuildType)"-DLLVM_OPTIMIZED_TABLEGEN=OFF  ..
+              echo "Configuring CMake with: cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX=\"$(INSTALL_DIRECTORY)\$(BuildType)\" -DLLVM_OPTIMIZED_TABLEGEN=OFF  .."
+              cmake -DCMAKE_BUILD_TYPE=$(BuildType) -Thost=x64 -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)\$(BuildType)" -DLLVM_OPTIMIZED_TABLEGEN=OFF  ..
               cmake --build . --target install --config $(BuildType)
                     
           - task: CopyFiles@2
